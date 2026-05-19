@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>شجرة آل أبو الجدايل</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
+
+  :root {
+    --green: #2d6a4f;
+    --green-light: #d8f3dc;
+    --green-mid: #74c69d;
+    --brown: #6b3f1a;
+    --brown-light: #f5e6d3;
+    --gold: #b5873a;
+    --gold-light: #fdf3dc;
+    --bg: #f8f6f0;
+    --white: #ffffff;
+    --text: #1a1a1a;
+    --muted: #6b6b6b;
+    --border: rgba(0,0,0,0.1);
+    --r: 14px;
+    --rs: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'Tajawal', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 40px;
+  }
+
+  .top-bar {
+    background: var(--green);
+    padding: 20px 16px 16px;
+    text-align: center;
+    position: relative;
+  }
+  .top-bar::after {
+    content: '';
+    display: block;
+    height: 6px;
+    background: linear-gradient(90deg, var(--gold), #e6b96a, var(--gold));
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+  }
+  .top-bar h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 3px;
+    letter-spacing: 0.5px;
+  }
+  .top-bar p { font-size: 13px; color: rgba(255,255,255,0.75); }
+
+  .page { display: none; padding: 16px; }
+  .page.active { display: block; }
+
+  .card {
+    background: var(--white);
+    border-radius: var(--r);
+    border: 1px solid var(--border);
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+
+  .label {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 4px;
+    font-weight: 500;
+    letter-spacing: 0.4px;
+  }
+  .title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    color: var(--text);
+  }
+
+  input[type=text] {
+    width: 100%;
+    padding: 13px 14px;
+    font-size: 16px;
+    font-family: 'Tajawal', sans-serif;
+    border: 1.5px solid var(--border);
+    border-radius: var(--rs);
+    background: #fafafa;
+    color: var(--text);
+    outline: none;
+    direction: rtl;
+    transition: border-color 0.2s;
+  }
+  input[type=text]:focus { border-color: var(--green); background: #fff; }
+
+  .branch-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .branch-btn {
+    padding: 16px 10px;
+    border-radius: var(--rs);
+    border: 2px solid transparent;
+    cursor: pointer;
+    text-align: center;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    background: #f5f5f0;
+    color: var(--text);
+    transition: all 0.18s;
+    -webkit-user-select: none;
+  }
+  .branch-btn .icon { font-size: 24px; display: block; margin-bottom: 5px; }
+
+  .b-h  { --bc:#2d6a4f; --bg:#d8f3dc; --tx:#1b4332; }
+  .b-hu { --bc:#185FA5; --bg:#E6F1FB; --tx:#0C447C; }
+  .b-s  { --bc:#A32D2D; --bg:#FCEBEB; --tx:#791F1F; }
+  .b-a  { --bc:#B8860B; --bg:#FEFBD0; --tx:#7A5800; }
+  .branch-btn:active { transform: scale(0.97); }
+  .branch-btn.sel {
+    border-color: var(--bc);
+    background: var(--bg);
+    color: var(--tx);
+  }
+
+  .names-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 7px;
+    margin-bottom: 10px;
+  }
+  .name-btn {
+    padding: 10px 6px;
+    border-radius: var(--rs);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    text-align: center;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 13px;
+    background: #fafafa;
+    color: var(--text);
+    transition: all 0.15s;
+    -webkit-user-select: none;
+  }
+  .name-btn:active { transform: scale(0.96); }
+  .name-btn.sel {
+    background: var(--green);
+    border-color: var(--green);
+    color: #fff;
+    font-weight: 700;
+  }
+
+  .step-row {
+    margin-bottom: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px dashed var(--border);
+  }
+  .step-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .step-num {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--green-light);
+    color: var(--green);
+    font-size: 12px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .step-lbl { font-size: 13px; color: var(--muted); font-weight: 500; }
+
+  .add-gen-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    padding: 10px;
+    background: var(--green-light);
+    color: var(--green);
+    border: 1.5px dashed var(--green-mid);
+    border-radius: var(--rs);
+    font-family: 'Tajawal', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all 0.15s;
+  }
+  .add-gen-btn:active { opacity: 0.75; }
+
+  .done-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--green);
+    color: #fff;
+    border: none;
+    border-radius: var(--rs);
+    font-family: 'Tajawal', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all 0.18s;
+    letter-spacing: 0.3px;
+  }
+  .done-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .done-btn:active:not(:disabled) { transform: scale(0.98); }
+
+  .sec-btn {
+    width: 100%;
+    padding: 13px;
+    background: #f0f0eb;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: var(--rs);
+    font-family: 'Tajawal', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: all 0.15s;
+  }
+  .sec-btn:active { opacity: 0.75; }
+
+  .fade-card { opacity: 0.4; pointer-events: none; transition: opacity 0.25s; }
+  .fade-card.on { opacity: 1; pointer-events: auto; }
+
+  /* Result page */
+  .result-hero {
+    border-radius: var(--r);
+    padding: 24px 16px 20px;
+    text-align: center;
+    margin-bottom: 12px;
+    border: 2px solid;
+    position: relative;
+    overflow: hidden;
+  }
+  .result-hero::before {
+    content: '🌳';
+    position: absolute;
+    font-size: 100px;
+    opacity: 0.06;
+    top: -10px; left: -10px;
+  }
+  .avatar {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; font-weight: 700;
+    margin: 0 auto 12px;
+    border: 3px solid rgba(255,255,255,0.6);
+  }
+  .res-name { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .res-branch {
+    display: inline-block;
+    padding: 5px 18px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    border: 1.5px solid;
+    margin-bottom: 16px;
+  }
+  .chain-label { font-size: 11px; color: var(--muted); margin-bottom: 8px; font-weight: 500; letter-spacing: 0.3px; }
+  .chain-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 5px;
+    align-items: center;
+  }
+  .chain-node {
+    padding: 4px 12px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.55);
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid rgba(0,0,0,0.1);
+  }
+  .chain-arr { font-size: 12px; opacity: 0.5; }
+  .chain-node.me {
+    background: rgba(255,255,255,0.9);
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  /* Admin page */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .stat-box {
+    background: #fafafa;
+    border: 1px solid var(--border);
+    border-radius: var(--rs);
+    padding: 12px 8px;
+    text-align: center;
+    border-top: 4px solid;
+  }
+  .stat-n { font-size: 28px; font-weight: 700; }
+  .stat-l { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .guest-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .guest-row:last-child { border-bottom: none; }
+  .g-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .g-num { font-size: 11px; color: var(--muted); min-width: 20px; }
+  .g-info { flex: 1; }
+  .g-name { font-size: 14px; font-weight: 700; }
+  .g-chain { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+  .total-badge {
+    display: inline-block;
+    background: var(--green);
+    color: #fff;
+    padding: 3px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 30px 16px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  /* ===== PRINT STYLES ===== */
+  @media print {
+    body * { visibility: hidden !important; }
+    #printable-badge, #printable-badge * { visibility: visible !important; }
+    #printable-badge {
+      position: fixed !important;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      background: white !important;
+    }
+  }
+
+  .badge-card {
+    width: 320px;
+    border-radius: 20px;
+    border: 3px solid;
+    overflow: hidden;
+    font-family: 'Tajawal', sans-serif;
+    direction: rtl;
+    margin: 0 auto;
+  }
+  .badge-top {
+    padding: 30px 16px 24px;
+    text-align: center;
+  }
+  .badge-name {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .badge-father {
+    font-size: 16px;
+    opacity: 0.75;
+    margin-bottom: 14px;
+  }
+  .badge-branch-pill {
+    display: inline-block;
+    padding: 6px 22px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 700;
+    background: rgba(255,255,255,0.6);
+    border: 2px solid rgba(255,255,255,0.8);
+  }
+  .badge-bottom {
+    background: rgba(255,255,255,0.95);
+    padding: 18px 16px 24px;
+    border-top: 1.5px solid rgba(0,0,0,0.08);
+  }
+  .badge-chain-lbl {
+    font-size: 11px;
+    color: #888;
+    margin-bottom: 10px;
+    letter-spacing: 0.4px;
+    font-weight: 500;
+    text-align: center;
+  }
+  .badge-chain-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+  }
+  .badge-cn {
+    font-size: 14px;
+    padding: 5px 13px;
+    border-radius: 12px;
+    background: #f0f0eb;
+    color: #333;
+    font-weight: 500;
+    border: 0.5px solid #ddd;
+  }
+  .badge-cn.last {
+    font-weight: 700;
+    font-size: 15px;
+    background: #e4e4de;
+  }
+  .badge-cn-arr { font-size: 13px; color: #aaa; }
+  .empty-state .big { font-size: 40px; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <h1>🌳 آل أبو الجدايل</h1>
+  <p>شجرة العائلة — لقاء جدة</p>
+</div>
+
+<!-- صفحة التسجيل -->
+<div class="page active" id="pg-in">
+
+  <div class="card" style="margin-top:14px">
+    <div class="label">الخطوة ١ من ٤</div>
+    <div class="title">ما اسمك الأول؟</div>
+    <input type="text" id="inp-name" placeholder="اسمك فقط..." oninput="onName()"/>
+  </div>
+
+  <div class="card fade-card" id="c-father">
+    <div class="label">الخطوة ٢ من ٤</div>
+    <div class="title">ما اسم والدك؟</div>
+    <input type="text" id="inp-father" placeholder="اسم الأب..." oninput="onFather()"/>
+  </div>
+
+  <div class="card fade-card" id="c-chain">
+    <div class="label">الخطوة ٣ من ٤</div>
+    <div class="title" id="chain-title">حدد سلسلة أجدادك</div>
+    <div id="chain-steps"></div>
+    <button class="add-gen-btn" id="add-gen-btn" onclick="addGeneration()" style="display:none">
+      ＋ أضف جيل آخر
+    </button>
+  </div>
+
+  <div class="card fade-card" id="c-branch">
+    <div class="label">الخطوة ٤ من ٤</div>
+    <div class="title">من فرع أي ابن من أبناء شحاتة؟</div>
+    <div class="branch-grid">
+      <div class="branch-btn b-h" id="bb-h" onclick="onBranch('h')">
+        <span class="icon">🌿</span>فرع حسن
+      </div>
+      <div class="branch-btn b-hu" id="bb-hu" onclick="onBranch('hu')">
+        <span class="icon">🌿</span>فرع حسين
+      </div>
+      <div class="branch-btn b-s" id="bb-s" onclick="onBranch('s')">
+        <span class="icon">🌿</span>فرع سعيد
+      </div>
+      <div class="branch-btn b-a" id="bb-a" onclick="onBranch('a')">
+        <span class="icon">🌿</span>فرع عبدالسلام
+      </div>
+    </div>
+  </div>
+
+  <button class="done-btn" id="btn-sub" onclick="doSubmit()" disabled>
+    ✓ تسجيل الدخول
+  </button>
+
+</div>
+
+<!-- صفحة النتيجة -->
+<div class="page" id="pg-res">
+  <div style="margin-top:14px">
+    <div class="result-hero" id="r-hero">
+      <div class="avatar" id="r-avt"></div>
+      <div class="res-name" id="r-name"></div>
+      <div><span class="res-branch" id="r-badge"></span></div>
+      <div class="chain-label">سلسلة نسبك من الجد الأكبر</div>
+      <div class="chain-wrap" id="r-chain"></div>
+    </div>
+    <button class="done-btn" id="btn-print" onclick="printBadge()" style="margin-bottom:8px">
+      🖨️ اطبع بطاقتك
+    </button>
+    <button class="done-btn" onclick="goNew()" style="background:#2d6a4f;margin-bottom:8px">＋ تسجيل ضيف جديد</button>
+    <button class="sec-btn" onclick="goAdmin()">📋 قائمة الحضور</button>
+  </div>
+</div>
+
+<!-- صفحة البطاقة للطباعة -->
+<div class="page" id="pg-badge">
+  <div style="margin-top:14px;text-align:center">
+    <p style="font-size:13px;color:var(--muted);margin-bottom:12px">اضغط زر الطباعة في متصفحك لطباعة البطاقة</p>
+    <div id="badge-preview"></div>
+    <button class="done-btn" onclick="window.print()" style="margin-bottom:8px">🖨️ طباعة</button>
+    <button class="sec-btn" onclick="show('pg-res')">← رجوع</button>
+  </div>
+</div>
+
+<!-- صفحة الإدارة -->
+<div class="page" id="pg-adm">
+  <div style="margin-top:14px">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <span style="font-size:16px;font-weight:700">الحضور</span>
+        <span class="total-badge" id="adm-tot">0 ضيف</span>
+      </div>
+      <div class="stats-row" id="adm-stats"></div>
+      <div id="adm-list"></div>
+    </div>
+    <button class="sec-btn" onclick="goIn()">← رجوع للتسجيل</button>
+  </div>
+</div>
+
+<script>
+const TREE = {
+  h:  { label:'فرع حسن',       color:'#2d6a4f', bg:'#d8f3dc', tx:'#1b4332',
+        kids:['شحاتة','حمادة','عبدالكريم','حسين','حامد','أبو السعود','سنوسي','أسعد'] },
+  hu: { label:'فرع حسين',      color:'#185FA5', bg:'#E6F1FB', tx:'#0C447C',
+        kids:['حسين','حسن','صديق','نور الهدى','زيد','فيصل','درويش','صدقة'] },
+  s:  { label:'فرع سعيد',      color:'#A32D2D', bg:'#FCEBEB', tx:'#791F1F',
+        kids:['فتحي','شحاتة','زين العابدين','عبدالمجيد'] },
+  a:  { label:'فرع عبدالسلام', color:'#B8860B', bg:'#FEFBD0', tx:'#7A5800',
+        kids:['سراج','جميل'] }
+};
+
+let curBranch = null;
+let ancestors = [];
+let guests = [];
+let genCount = 0;
+
+function onName() {
+  const v = document.getElementById('inp-name').value.trim();
+  document.getElementById('c-father').classList.toggle('on', !!v);
+  chkSub();
+}
+
+function onFather() {
+  const v = document.getElementById('inp-father').value.trim();
+  if (v) {
+    document.getElementById('c-chain').classList.add('on');
+    buildFirstGen();
+  } else {
+    document.getElementById('c-chain').classList.remove('on');
+    document.getElementById('c-branch').classList.remove('on');
+  }
+  chkSub();
+}
+
+function onBranch(k) {
+  curBranch = k;
+  Object.keys(TREE).forEach(b => document.getElementById('bb-' + b).classList.remove('sel'));
+  document.getElementById('bb-' + k).classList.add('sel');
+  chkSub();
+}
+
+function buildFirstGen() {
+  const cont = document.getElementById('chain-steps');
+  cont.innerHTML = '';
+  ancestors = [];
+  genCount = 1;
+  addGenStep(cont, 0, 'جدك الأول (والد والدك)', []);
+  document.getElementById('add-gen-btn').style.display = 'flex';
+}
+
+function addGenStep(cont, idx, lbl, opts) {
+  const div = document.createElement('div');
+  div.className = 'step-row';
+  div.id = 'sr-' + idx;
+  div.innerHTML = `
+    <div class="step-header">
+      <span class="step-num">${idx + 1}</span>
+      <span class="step-lbl">${lbl}</span>
+    </div>
+    <div class="names-grid" id="ng-${idx}">
+      ${opts.map(o => `<div class="name-btn" onclick="pickAnc(${idx},this,'${o}')">${o}</div>`).join('')}
+    </div>
+    <input type="text" id="ti-${idx}" placeholder="اكتب الاسم..." oninput="typeAnc(${idx},this.value)" style="margin-top:6px"/>
+  `;
+  cont.appendChild(div);
+}
+
+function addGeneration() {
+  const cont = document.getElementById('chain-steps');
+  const idx = genCount;
+  genCount++;
+  const genLabels = [
+    'ابنه — جدك الثاني',
+    'ابنه — جدك الثالث',
+    'ابنه — جدك الرابع',
+    'ابنه — جدك الخامس',
+    'ابنه — الجيل التالي'
+  ];
+  const lbl = idx <= genLabels.length ? genLabels[idx - 1] : `الجيل ${idx + 1}`;
+  addGenStep(cont, idx, lbl, []);
+  document.getElementById('add-gen-btn').style.display = 'flex';
+  document.getElementById('ti-' + idx).scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function pickAnc(idx, el, name) {
+  document.querySelectorAll(`#ng-${idx} .name-btn`).forEach(b => b.classList.remove('sel'));
+  el.classList.add('sel');
+  document.getElementById('ti-' + idx).value = '';
+  ancestors[idx] = name;
+  document.getElementById('c-branch').classList.add('on');
+  chkSub();
+}
+
+function typeAnc(idx, val) {
+  if (val.trim()) {
+    document.querySelectorAll(`#ng-${idx} .name-btn`).forEach(b => b.classList.remove('sel'));
+    ancestors[idx] = val.trim();
+    document.getElementById('c-branch').classList.add('on');
+  } else {
+    ancestors[idx] = null;
+  }
+  chkSub();
+}
+
+function chkSub() {
+  const name = document.getElementById('inp-name').value.trim();
+  const father = document.getElementById('inp-father').value.trim();
+  const hasAnc = ancestors.length > 0 && ancestors[0];
+  document.getElementById('btn-sub').disabled = !(name && father && curBranch && hasAnc);
+}
+
+function doSubmit() {
+  const name = document.getElementById('inp-name').value.trim();
+  const father = document.getElementById('inp-father').value.trim();
+  const b = TREE[curBranch];
+  const cleanAnc = ancestors.filter(a => a && a.trim());
+  const g = { name, father, branch: curBranch, label: b.label, ancestors: cleanAnc, num: guests.length + 1 };
+  guests.push(g);
+
+  const avt = document.getElementById('r-avt');
+  avt.textContent = name[0] || '؟';
+  avt.style.background = 'rgba(255,255,255,0.5)';
+  avt.style.color = b.tx;
+
+  document.getElementById('r-name').textContent = name + ' بن/بنت ' + father;
+  document.getElementById('r-name').style.color = b.tx;
+
+  const hero = document.getElementById('r-hero');
+  hero.style.borderColor = b.color;
+  hero.style.background = b.bg;
+
+  const badge = document.getElementById('r-badge');
+  badge.textContent = b.label;
+  badge.style.background = 'rgba(255,255,255,0.5)';
+  badge.style.color = b.tx;
+  badge.style.borderColor = b.color;
+
+  const fullChain = ['محمد أبو الجدايل', 'شحاتة', b.label.replace('فرع ', ''), ...cleanAnc, father, name];
+  document.getElementById('r-chain').innerHTML = fullChain.map((n, i, a) =>
+    `<span class="chain-node${i === a.length - 1 ? ' me' : ''}">${n}</span>${i < a.length - 1 ? '<span class="chain-arr">←</span>' : ''}`
+  ).join('');
+
+  show('pg-res');
+}
+
+function goNew() {
+  curBranch = null; ancestors = []; genCount = 0;
+  document.getElementById('inp-name').value = '';
+  document.getElementById('inp-father').value = '';
+  document.querySelectorAll('.branch-btn').forEach(b => b.classList.remove('sel'));
+  document.getElementById('chain-steps').innerHTML = '';
+  document.getElementById('add-gen-btn').style.display = 'none';
+  document.getElementById('c-father').classList.remove('on');
+  document.getElementById('c-chain').classList.remove('on');
+  document.getElementById('c-branch').classList.remove('on');
+  document.getElementById('btn-sub').disabled = true;
+  show('pg-in');
+  window.scrollTo(0, 0);
+}
+
+function goAdmin() {
+  const cnt = { h: 0, hu: 0, s: 0, a: 0 };
+  guests.forEach(g => cnt[g.branch]++);
+  document.getElementById('adm-tot').textContent = guests.length + ' ضيف';
+
+  document.getElementById('adm-stats').innerHTML = Object.keys(TREE).map(k => {
+    const b = TREE[k];
+    return `<div class="stat-box" style="border-top-color:${b.color}">
+      <div class="stat-n" style="color:${b.color}">${cnt[k]}</div>
+      <div class="stat-l">${b.label}</div>
+    </div>`;
+  }).join('');
+
+  const list = document.getElementById('adm-list');
+  if (!guests.length) {
+    list.innerHTML = '<div class="empty-state"><div class="big">👥</div>لا يوجد ضيوف بعد</div>';
+  } else {
+    list.innerHTML = guests.map(g => {
+      const b = TREE[g.branch];
+      const chain = [b.label.replace('فرع ', ''), ...g.ancestors, g.father, g.name].join(' ← ');
+      return `<div class="guest-row">
+        <span class="g-num">${g.num}</span>
+        <span class="g-dot" style="background:${b.color}"></span>
+        <div class="g-info">
+          <div class="g-name">${g.name}</div>
+          <div class="g-chain">${chain}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+  show('pg-adm');
+}
+
+function printBadge() {
+  const g = guests[guests.length - 1];
+  const b = TREE[g.branch];
+  const fullChain = ['محمد أبو الجدايل', 'شحاتة', b.label.replace('فرع ',''), ...g.ancestors, g.father, g.name];
+
+  const chainHTML = fullChain.map((n, i, a) =>
+    `<span class="badge-cn${i===a.length-1?' last':''}">${n}</span>${i<a.length-1?'<span class="badge-cn-arr">←</span>':''}`
+  ).join('');
+
+  const html = `
+    <div id="printable-badge" style="display:flex;align-items:center;justify-content:center;padding:20px">
+      <div class="badge-card" style="border-color:${b.color}">
+        <div class="badge-top" style="background:${b.bg}">
+          <div class="badge-name" style="color:${b.tx}">${g.name}</div>
+          <div class="badge-father" style="color:${b.tx}">بن/بنت ${g.father}</div>
+          <span class="badge-branch-pill" style="color:${b.tx}">${b.label}</span>
+        </div>
+        <div class="badge-bottom">
+          <div class="badge-chain-lbl">سلسلة النسب</div>
+          <div class="badge-chain-row">${chainHTML}</div>
+        </div>
+      </div>
+    </div>`;
+
+  document.getElementById('badge-preview').innerHTML = html;
+  show('pg-badge');
+}
+
+function goIn() { show('pg-in'); }
+
+function show(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>
